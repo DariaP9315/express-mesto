@@ -12,7 +12,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Произошла ошибка' });
+        return res.status(400).send({ message: err.message });
       }
       return res.status(500).send(err);
     });
@@ -24,7 +24,7 @@ const deleteCard = (req, res) => {
       if (!card) {
         return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
-      return res.status(200).send('Карточка удалена');
+      return res.status(200).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
