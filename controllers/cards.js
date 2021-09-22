@@ -1,83 +1,90 @@
 const Card = require('../models/card');
 
-const getCards = (req, res) => Card.find({})
-  .then((cards) => res.status(200).send(cards))
-  .catch((err) => res.status(500).send(err));
+const BadRequestError = require('../errors/bad-request-err'); // 400
+const ForbiddenError = require('../errors/forbidden-err'); // 403
+const NotFoundError = require('../errors/not-found-error'); // 404
 
-const createCard = (req, res) => {
+module.exports.getCards = (req, res, next) => Card.find({})
+  .then((cards) => res.send(cards))
+  .catch(next);
+
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message });
+        throw new BadRequestError('Переданы некорректные данные при создании карточки.');
       }
-      return res.status(500).send(err);
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
-  Card.findOneAndRemove({ owner: req.user._id, _id: req.params.cardId })
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
     .then((card) => {
-      if (!card) {
-        return res.status(404).send({ message: 'Нет карточки с таким id' });
+      if (card === null) {
+        throw new NotFoundError('Карточка с указанным _id не найдена.');
       }
-      return res.status(200).send({ message: 'Карточка удалена' });
+      if (card.owner.toString() !== req.user._id) {
+        Card.deleteOne(card)
+          .then(() => res.send({ data: card }));
+      } else {
+        throw new ForbiddenError('Недостаточно прав для удаления карточки.');
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Id карточки не валидный' });
+        throw new BadRequestError('Переданы некорректные данные.');
       }
-      return res.status(500).send(err);
-    });
+      next(err);
+    })
+    .catch(next);
 };
 
-const likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
       if (card === null) {
-        return res.status(404).send({ message: 'Карточка с указанным id не найдена' });
+        throw new NotFoundError('Карточка с указанным _id не найдена.');
+      } else {
+        res.send({ data: card });
       }
-      return res.send({ data: card });
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные.' });
+        throw new BadRequestError('Переданы некорректные данные.');
       }
-      // eslint-disable-next-line no-undef
       next(err);
-    });
+    })
+    .catch(next);
 };
 
-const dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
       if (card === null) {
-        return res.status(404).send({ message: 'Карточка с указанным id не найдена' });
+        throw new NotFoundError('Карточка с указанным _id не найдена.');
+      } else {
+        res.send({ data: card });
       }
-      return res.send({ data: card });
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные.' });
+        throw new BadRequestError('Переданы некорректные данные.');
       }
-      // eslint-disable-next-line no-undef
       next(err);
-    });
-};
-
-module.exports = {
-  getCards, createCard, deleteCard, likeCard, dislikeCard,
+    })
+    .catch(next);
 };
