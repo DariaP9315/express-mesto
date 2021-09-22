@@ -1,11 +1,11 @@
 {
   "name": "mesto-express",
   "version": "1.0.0",
-  "description": "",
+  "description": "бэкенд проекта Mesto",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "lint": "npx eslint",
+    "lint": "npx eslint .",
     "dev": "nodemon app.js"
   },
   "keywords": [],
@@ -16,8 +16,6 @@
     "body-parser": "^1.19.0",
     "celebrate": "^15.0.0",
     "cookie-parser": "^1.4.5",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.24.2",
     "express": "^4.17.1",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
@@ -26,6 +24,8 @@
   },
   "devDependencies": {
     "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
     "nodemon": "^2.0.12"
   }
 }

@@ -29,12 +29,11 @@ module.exports.deleteCard = (req, res, next) => {
       if (card === null) {
         throw new NotFoundError('Карточка с указанным _id не найдена.');
       }
-      if (card.owner.toString() !== req.user._id) {
-        Card.deleteOne(card)
+      if (card.owner.toString() === req.user._id) {
+        return Card.deleteOne(card)
           .then(() => res.send({ data: card }));
-      } else {
-        throw new ForbiddenError('Недостаточно прав для удаления карточки.');
       }
+      throw new ForbiddenError('Недостаточно прав для удаления карточки.');
     })
     .catch((err) => {
       if (err.name === 'CastError') {

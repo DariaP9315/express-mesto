@@ -50,9 +50,7 @@ app.use(cardsRouter);
 app.use(errors());
 app.use(error);
 
-app.use(cookieParser());
-
-app.get('*', () => {
+app.use('*', () => {
   throw new NotFoundError('Запрашиваемый ресурс не существует');
 });
 
