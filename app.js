@@ -47,12 +47,12 @@ app.use(auth);
 app.use(usersRouter);
 app.use(cardsRouter);
 
-app.use(errors());
-app.use(error);
-
 app.use('*', () => {
   throw new NotFoundError('Запрашиваемый ресурс не существует');
 });
+
+app.use(errors());
+app.use(error);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
