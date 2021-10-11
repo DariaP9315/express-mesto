@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
@@ -19,19 +19,6 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(cookieParser());
-app.use(cors({
-  origin: [
-    'https://mesto-krasivoe.nomoredomains.club',
-    'https://api.mesto-krasivoe.nomoredomains.club',
-    'http://mesto-krasivoe.nomoredomains.club',
-    'http://api.mesto-krasivoe.nomoredomains.club',
-    'http://localhost:3000',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  allowedHeaders: ['Authorization', 'Content-Type'],
-  credentials: true,
-  optionsSuccessStatus: 200,
-}));
 
 // Подлключение к БД mestodb
 mongoose.connect('mongodb://localhost:27017/mestodb');
