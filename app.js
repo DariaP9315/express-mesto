@@ -20,6 +20,8 @@ const app = express();
 
 const corsOptions = {
   origin: [
+    'https://mesto-krasivoe.nomoredomains.club',
+    'https://api.mesto-krasivoe.nomoredomains.club',
     'http://mesto-krasivoe.nomoredomains.club',
     'https://mesto-krasivoe.nomoredomains.club',
     'http://localhost:3000',
