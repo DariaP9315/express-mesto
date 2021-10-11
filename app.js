@@ -21,6 +21,8 @@ const app = express();
 app.use(cookieParser());
 app.use(cors({
   origin: [
+    'https://mesto-krasivoe.nomoredomains.club',
+    'https://api.mesto-krasivoe.nomoredomains.club',
     'http://mesto-krasivoe.nomoredomains.club',
     'http://api.mesto-krasivoe.nomoredomains.club',
     'http://localhost:3000',
